@@ -1,0 +1,130 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[a4paper,width=160mm,top=20mm,bottom=40mm]{geometry}
+\usepackage[italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{tabls}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{textcomp}
+\usepackage{subfig}
+\usepackage{microtype}
+\usepackage{bigstrut}
+\usepackage{mparhack}
+\usepackage{float}
+\usepackage{relsize}
+\usepackage{gensymb}
+\usepackage{cancel}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{tikz}
+% \pagestyle{fancy}
+\restylefloat{table}
+\hbadness 10000
+\vbadness 10000
+\hfuzz=31pt
+\vfuzz=30pt
+\frenchspacing
+
+\title{Visualizzazione dati e riproducibilità:\\
+La sfida dei Big Data nell'ambito dei bandi culturali
+\vspace{0.2cm}}
+\subtitle{Progetto per il bando Che Fare}
+\author{Tommaso Radicioni\thanks{\textit{Indirizzo email:} tommasoradicioni44@gmail.com}, Daniele Gambetta\thanks{\textit{Indirizzo email:} daniele.gambit@inventati.org}}
+
+\begin{document}
+\maketitle
+\section{Introduzione}
+L'enorme mole di dati che ci circonda ha cambiato radicalmente le modalità di accesso alle informazioni che ognuno di noi produce giornalmente. La costante produzione di contenuti digitali si può paragonare, per la sua natura incessante e costante, alla creazione di una "scia digitale" che chiunque utilizzi uno smartphone o un computer lascia al proprio passaggio. Questa affermazione è tanto vera quando parliamo della sfera personale di ogni utente che accede, ad esempio, sul proprio account di Facebook quanto per attività che riguardano un piano più vasto che riguarda l'intera collettività. La quantità di dati che le pubbliche amministrazioni e gli enti pubblici possiedono di cittadini e associazioni è sterminata: la sfida che ci viene dunque posta in questo momento è quella di rendere quei dati aperti e trovare dei metodi innovativi ed efficaci di comunicare all'esterno cosa quei dati ci dicono della realtà complessa in cui viviamo. Andando in profondità alla scoperta dei dati che possediamo ma a cui ci è spesso negato l'accesso, potremo capire non solo già quello che conosciamo ma anche intepretare e prevedere azioni che possono migliorare il nostro futuro e quello di chi ci circonda. In quest'ottica, l'analisi dati diventa quindi un processo di riappropriazione di una conoscenza che ci è stata finora preclusa, da una parte, per via della mancanza di strumenti tecnologici adeguati per portarla a termine, dall'altra, per via dell'assenza di datasets distribuiti in un formato aperto e leggibile su cui lavorare e poter estrapolare informazioni.  
+
+\section{Descrizione dei datasets}
+I datasets a disposizione per l'analisi possiedono molteplici analogie ma anche sostanziali differenze, le quali rendono la loro analisi un compito diversificato a seconda dello specifico dataset che viene considerato. Tramite questionari autocompilati dai soggetti partecipanti, i datasets raccolgono informazioni sui team di individui o sulle organizzazioni che hanno presentato domanda insieme a specifiche informazioni sui singoli progetti presentati. La galassia composita e variegata di soggetti è presentata tramite variabili che riportano informazioni diversificate e che saranno descritte con maggiore dettaglio nelle sottosezioni seguenti.
+\subsection{SN174: bandi ORA! (2016) e OPEN (2015/2016)}
+Il primo dataset raccoglie le informazioni riguardanti i partecipanti ai bandi \textbf{ORA!} (edizione 2016) e \textbf{OPEN} (edizione 2015 e edizione 2016) insieme ad una serie di informazioni relative ai progetti presentati nell'ambito dei suddetti bandi. A partire dal 2015, la Compagnia di San Paolo con il bando OPEN sostiene le iniziative che mirano ad ampliare e diversificare la domanda culturale da parte dei cittadini attraverso la sperimentazione di nuove forme di coinvolgimento attivo del pubblico. La call, dedicata alle regioni del Nord-Ovest, lavora su nuovi modelli di relazione tra istituzioni culturali e spettatori individuando nella centralità del pubblico una possibile leva di crescita individuale e territoriale. Il Bando ORA! si propone invece di favorire a livello nazionale la produzione culturale attraverso il sostegno a progetti nelle arti visive, performative e negli altri linguaggi espressivi della cultura contemporanea, in un'ottica interdisciplinare e con un'attenzione specifica alle nuove tecnologie. Il Bando mira inoltre ad arricchire l'offerta culturale contemporanea di Piemonte e Liguria, attraendo nuovi soggetti a produrre sul territorio, connettendoli e sistematizzandoli con le istituzioni locali. 
+\\ \\
+La base di dati comprende una serie di informazioni riguardanti il soggetto partecipante, quali, ad esempio: 
+\begin{itemize}
+\item la provincia di residenza;
+\item la data di costituzione dell’organizzazione;
+\item il tipo di assetto giuridico.
+\end{itemize}
+Inoltre, una rilevanza significativa è data alla descrizione del progetto presentato nell'ambito del bando. Le informazioni relative al progetto sono le seguenti:
+\begin{itemize}
+\item ambito di interesse del progetto (\textbf{solo nell'ambito del bando OPEN (2015/2016)});
+\item ambito territoriale in cui il progetto verrà realizzato;
+\item ambito in cui l’iniziativa avrà maggiore rilevanza (\textbf{solo nell'ambito del bando OPEN (2015/2016)});
+\item contenuto del progetto;
+\item tipo di target;
+\item entrate ed uscite preventivate in termini percentuali rispetto all'importo totale del progetto;
+\item importo totale del progetto.
+\end{itemize} 
+In particolare, il contenuto del progetto è descritto utilizzando un set di parole chiave selezionate dal soggetto, partendo da una lista pre-codificata presente all’interno della scheda per la presentazione della domanda. Il target del progetto è invece suddiviso in tre classi che sono:
+\begin{itemize}
+\item \textit{Generico}: il soggetto partecipante non opera una classificazione netta dei soggetti beneficiari del progetto, il quale si rivolge quindi ad un pubblico generico;
+\item \textit{Specifico}: il progetto si rivolge ad un pubblico specifico. In questo caso il tipo di target viene indicato nelle variabili successive;
+\item \textit{Entrambi}: il progetto si rivolge sia ad un pubblico generico, sia a uno specifico.
+\end{itemize}
+\subsection{SN175: bando iC - Innovazione Culturale (2013/2014), (2015) e (2016/2017)}
+Il secondo dataset riporta una serie di informazioni relative ai soggetti partecipanti ed ai progetti presentati da essi nell'ambito del bando \textbf{iC - Innovazione culturale} in tre diverse edizioni: edizione 2013/2014, edizione 2015 ed edizione 2016/2017.  fa filantropia da 25 anni ed è oggi concentrata sul sostegno ai giovani, al welfare di comunità e al benessere delle persone, realizzando progetti insieme alle organizzazioni non profit. Il progetto iC - innovazioneCulturale della \textbf{Fondazione Cariplo} ha l'obiettivo di sviluppare e diffondere pratiche innovative per ripensare il modo di fare cultura. Dal 2014 ad oggi, sono state realizzate tre edizioni di tale programma iC in cui sono state raccolte 963 proposte e ne sono state selezionate 54 per il percorso di accompagnamento.
+\\ \\
+La base di dati raccoglie una serie di informazioni sui soggetti partecipanti e sugli eventuali altri soggetti associati. Il singolo soggetto proponente sceglie una delle seguenti modalità di partecipazione al bando:
+\begin{itemize}
+\item\textit{A titolo personale}: se nel progetto sono coinvolti altri soggetti oltre al proponente;
+\item\textit{In rappresentanza di un team informale}: se nel progetto è coinvolto solo il proponente o, se indicata, un’organizzazione che lavora nell’ambito creativo;
+\item\textit{In rappresentanza di un’organizzazione formalmente costituita}: se nel progetto è coinvolto solo il proponente o, se indicata, un’organizzazione che lavora nell’ambito creativo;
+\end{itemize}
+Le informazioni relative al soggetto proponente, insieme alle caratteristiche dei soggetti coinvolti in team informali, sono contenute all'interno del dataset e comprendono:
+\begin{itemize}
+\item la provincia di residenza;
+\item l'età e il sesso;
+\item il titolo di studio e la professione.  
+\end{itemize}
+Altre variabili riguardano il progetto presentato, quali:
+\begin{itemize}
+\item l’ambito culturale cui si rivolge l’idea;
+\item l’impatto per il sistema di offerta culturale;
+\item il target interessato;
+\item il tipo di carenza riscontrato nel progetto. 
+\end{itemize}
+Le informazioni disponibili per il primo e per i successivi bandi differiscono a causa del diverso sistema di raccolta dei dati.
+\subsection{SN176: bando cheFare (2012), (2013/2014) e (2015)}
+L'ultimo dataset comprende uno studio dei partecipanti al bando cheFare e raccoglie una serie di informazioni relative ai soggetti partecipanti a tre edizioni del suddetto bando: edizione 2012, edizione 2013/2014 ed edizione 2015. \textbf{cheFare} è un'agenzia per la trasformazione culturale nata come bando per progetti culturali innovativi; dal 2014 è un’associazione culturale che si occupa di produrre, narrare e aggregare pratiche concrete e riflessioni teoriche sui mutamenti culturali in corso. 
+\\ \\
+I bandi di cheFare sono nati per cercare risposte dal basso alle nuove necessità della produzione culturale, rivolgendosi a tipologie estremamente diverse di organizzazioni alla ricerca di progetti innovativi in grado di dialogare con nuovi pubblici, costruire coesione sociale sui territori, favorire una cultura aperta ed accessibile e sperimentare forme di sostenibilità economica. La base di dati è stata costruita in base alle informazioni raccolte sui soggetti proponenti che hanno partecipato alle tre edizioni del bando. Le informazioni riguardano prevalentemente le caratteristiche principali dell'organizzazione che ha presentato la domanda, quali, ad esempio:
+\begin{itemize}
+\item la regione di residenza;
+\item il tipo di organizzazione;
+\item il tempo di attività (\textbf{solo nell'ambito dei bandi i bandi cheFare 2 (2013/2014) e cheFare 3 (2015)});
+\item il numero di collaboratori e dipendenti a tempo pieno e parziale (\textbf{solo nell'ambito dei bandi i bandi cheFare 2 (2013/2014) e cheFare 3 (2015)}); 
+\end{itemize} 
+Il contenuto del progetto è descritto unicamente utilizzando un set di parole chiave selezionate dal soggetto, partendo da una lista pre-codificata presente all’interno della scheda per la presentazione della domanda.
+
+\section{Metodi per l'analisi dati}
+I datasets sono stati pre-processati ed analizzati tramite funzioni e comandi sviluppati in \textbf{R}\footnote{Per maggiori informazioni riguardanti questo ambiente software, si consiglia di visitare il sito del progetto che si trova al link \url{https://www.r-project.org/}}. R è un ambiente grafico e di sviluppo molto diffuso nell'analisi dati e per la realizzazione di grafici. I motivi di questa sua ampia diffusione sono molteplici. Innanzitutto, R è un \textit{GNU-Sofware}, ovvero è disponibile per la diffusione e l'utilizzo gratuito sotto i vincoli della GPL (General Public License), ed è per questo motivo compatibile con un'enorme varietà di sistemi operativi Unix, Windows e Mac. Inoltre, R è un ambiente progettato in maniera da rispondere ai comandi in maniera "intelligente", adattando la risposta al tipo di dati in esame. Un'altro vantaggio di R è il fatto di essere molto ben documentato e di avere una comunità di utilizzatori alle spalle che è molto vasta e collaborativa. Grazie a ciò, si rendono continuamente disponibili nuovi pacchetti per l'analisi ed è relativamente facile trovare in rete esempi e soluzioni di praticamente qualsiasi tipo di problema. Infine, nell'ambiente di R sono disponibili applicazioni perla grafica estremamente potenti, che consentono sia di esplorare i dati a disposizione sia di produrre grafici di qualità per la stampa o la videopresentazione. Per una migliore fruizione e la lettura del materiale prodotto, i grafici sono stati resi interrativi grazie all'utilizzo di una specifica libreria di R chiamata \textbf{plotly}. Plotly è implementato specificatamente per la creazione e la condivisione di grafici interattivi in R. Con poche righe di codice e grazie all'utilizzo di un'API (Application Programming Interface), si possono infatti realizzare un'ampia gamma di plots che possono essere rifiniti online con un'apposita interfaccia grafica.
+\\ \\
+Infine, \textbf{R Markdown}\footnote{Per maggiori informazioni sul linguaggio di programmazione ed i suoi utilizzi, si consiglia di visitare il sito del progetto che si trova al link http://rmarkdown.rstudio.com/} è stato utilizzato per rendere ancora più facile esplorare i grafici prodotti. Questo linguaggio di programmazione deriva dal più noto tool Markdown, usato ampliamente per convertire file di testo arricchiti con contenuti multimediale in una vasta classe di formati come HTML, ed è un ottimo modo per creare documenti dinamici a cui incorporare in modo naturale dei blocchi di codice scritti in R. L'enorme vantaggio di R Markdown è quello di supportare decine di formati per presentazioni, notebooks o altri documenti statici e dinamici in cui è possibile importare i file prodotti. Il prodotto finale dell'analisi dati è una serie di   
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=\textwidth]{}
+%\caption{Prova prova prova\label{mu2e}}
+%\end{figure}
+
+\section{Conclusioni}
+
+%\begin{thebibliography}{9}
+%
+%\bibitem{Libro:Divulgazione} Buchanan, Mark. "The Social Atom: Why the Rich Get Richer. Cheaters Get Caught, and Your Neighbor Usually Looks Like You" (Bloomsbury, USA) (2007).
+%
+%\end{thebibliography}
+
+\end{document}
+
+%\begin{equation*}
+%R_{\mu e}=\frac{\Gamma(\mu^{-}+\text{N(A,Z)}\longrightarrow e^{-}+\text{N(A,Z)})}{\Gamma(\mu^{-}+\text{N(A,Z)}\longrightarrow \text{all muon nuclear captures})}\leq 5.6\cdot10^{-17} \text{   (90\% C.L.)}
+%\end{equation*}

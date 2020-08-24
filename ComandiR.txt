@@ -1,0 +1,217 @@
+
+PLOT REALIZZATI CON DATASETS SN174 E SN176
+
+1) ggplot(data=file, aes(file$E.U.TOT)) + 
+     geom_bar(aes(y =..count../sum(..count..)),breaks=seq(20, 50, by = 2), 
+                    col="red", 
+                    fill="green", 
+                    alpha = .2) + 
+     labs(title="Histogram") +
+     labs(x="E.U.Totale", y="Conteggio") + facet_wrap(~BANDO) +
+     ggtitle ("E.U. totale dei vincitori") + theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+2) dfm <- melt(file[,c('BANDO','FORMA.GIU','E.RICAVI','E.C.AMM','E.C.PRIV','E.COFIN','E.SPAOLO','E.ALTRO')],id.vars=c('BANDO','FORMA.GIU'))
+   ggplot(dfm,aes(x = FORMA.GIU,y = value)) + 
++     geom_bar(aes(fill = variable),stat = "identity",position = "dodge") + labs(title = "Ricavi divisi per forma giuridica", x = "Forma Giuridica", y = "Ricavi") + facet_wrap(~BANDO) + ggtitle ("Ricavi dei vincitori divisi per bando") + theme(axis.text.x = element_text(angle = 30, hjust = 1)) 
+
+3) file <- within(file, 
+                    DATA.CRE <- factor(DATA.CRE, 
+                                       levels=names(sort(table(DATA.CRE), 
+                                                         decreasing=FALSE))))
+                                                         
+    ggplot(data = file, aes(x = DATA.CRE, y = PROV)) +
+     geom_point(alpha = 0.1, color = "blue") + labs(x="Data di nascita del soggetto vincitore", y="Provincia del soggetto vincitore") + facet_grid(~BANDO) +
+     ggtitle ("Soggetto vincitore: Data di nascita") + theme(axis.text.x = element_text(angle = 30, hjust = 1))
+     
+4) file_3<-lapply(file_3, function(x) {gsub("Associazione culturale", "Associazione", x)})
+        
+    ggplot(file_3, aes(x = factor(1), fill = factor(file_3$TIPO.ORG),order=factor(file_3$TIPO.ORG))) + geom_bar(width = 1, position = position_fill()) + coord_polar(theta = "y") + xlab('') + ylab('Forma giuridica del soggetto vincitore') + labs(fill='Forma giuridica') + theme_void() + facet_grid(facet=~EDIZIONE) + theme(legend.position='bottom',) + guides(fill=guide_legend(title.position="top",title.hjust = .5,nrow=4,byrow=TRUE))
+    
+    or:
+    
+    file_3_pie<-data.frame(prop.table(table(file_3$TIPO.ORG,file_3$EDIZIONE), 2))
+    round_df <- function(x, digits) {
+      numeric_columns <- sapply(x, mode) == 'numeric'
+      x[numeric_columns] <-  round(x[numeric_columns], digits)
+      x
+  }
+  file_3_pie$Freq<-round_df(file_3_pie$Freq, 4)
+  
+  # order elements in the dataframe based on frequency
+  file_3_pie<-file_3_pie[order(-file_3_pie$Freq), ]
+  file_3_pie<-file_3_pie[order(file_3_pie$Var2), ]
+  
+  label<-paste0(round((file_3_pie$Freq)*100, 1),"%")
+  
+  # pie chart
+  ggplot(data = file_3_pie, aes(x = "", y = Freq, fill = Var1)) + geom_bar(stat = "identity") + geom_text(aes(x = 1.3, label = label), position = position_stack(vjust = 0.5)) + coord_polar(theta = "y") + facet_grid(~Var2, scales = "free") + theme_void() + theme(legend.position='bottom') + guides(fill=guide_legend(title.position="top",title.hjust = .5,nrow=4,byrow=TRUE)) + xlab('') + ylab('Forma giuridica del soggetto vincitore') + labs(fill='Forma giuridica') + geom_text_repel(aes(label = label))
+  
+  #column chart
+  ggplot(data = file_3_pie, aes(x = Var1, y = Freq)) + geom_col(aes(fill = Var1), show.legend = FALSE) + coord_flip() + scale_fill_brewer(palette="Paired",direction = -1) + facet_grid(~Var2) + geom_label(aes(label = label, y=0.2, fill = Var1), show.legend = FALSE, size = 3, label.padding = unit(0.1,"lines")) + xlab('') + ylab('Forma giuridica del soggetto vincitore') + ggtitle(paste("Soggetto vincitore: Forma giuridica")) + theme(plot.title = element_text(hjust = 0.5))
+  
+  # if there are more than 12 colours
+  colourCount = length(unique(file_3_pie$Var1))
+  getPalette = colorRampPalette(brewer.pal(12, "Paired"))
+  ggplot(data = file_3_pie, aes(x = Var1, y = Freq)) + geom_col(aes(fill = Var1), show.legend = FALSE) + coord_flip() + facet_grid(~Var2) + geom_label(aes(label = label, y=0.1, fill = Var1), show.legend = FALSE, size = 3, label.padding = unit(0.1,"lines")) + xlab('') + ylab('Forma giuridica del soggetto vincitore') + ggtitle(paste("Soggetto vincitore: Forma giuridica")) + scale_fill_manual(values = getPalette(colourCount)) + theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5),axis.title=element_text(size=9,face="bold"))
+  
+ 5) file_3<-lapply(file_3, function(x) {gsub("Friuli Venezia Giulia|Lombardia|Piemonte e Valle d'Aosta|Emilia Romagna|Veneto|Trentino Alto Adige|Liguria","Nord Italia", x)})
+    file_3<-lapply(file_3, function(x) {gsub("Lazio|Umbria|Marche|Toscana","Centro Italia", x)})
+    file_3<-lapply(file_3, function(x) {gsub("Sicilia|Sardegna","Italia insulare", x)})
+    file_3<-lapply(file_3, function(x) {gsub("Basilicata|Calabria|Abruzzo e Molise|Campania|Puglia","Sud Italia", x)})
+    file_3<-as.data.frame(file_3)
+    
+    file_3_pie<-data.frame(prop.table(table(file_3$REGIONE,file_3$EDIZIONE), 2))
+    
+    round_df <- function(x, digits) {
+      numeric_columns <- sapply(x, mode) == 'numeric'
+      x[numeric_columns] <-  round(x[numeric_columns], digits)
+      x
+    }
+    file_3_pie$Freq<-round_df(file_3_pie$Freq, 4)
+  
+    # order elements in the dataframe based on frequency
+    file_3_pie<-file_3_pie[order(-file_3_pie$Freq), ]
+    file_3_pie<-file_3_pie[order(file_3_pie$Var2), ]
+  
+    label<-paste0(round((file_3_pie$Freq)*100, 1),"%")
+    
+    ggplot(data = file_3_pie, aes(x = "", y = Freq, fill = Var1)) + geom_bar(stat = "identity") + geom_text(aes(x = 1.3, label = label), position = position_stack(vjust = 0.5)) + coord_polar(theta = "y") + facet_grid(~Var2, scales = "free") + theme_void() + theme(legend.position='bottom') + guides(fill=guide_legend(title.position="top",title.hjust = .5,nrow=2,byrow=TRUE)) + labs(fill='Provenienza geografica') + scale_fill_brewer(palette="Set3") + ggtitle(paste("Soggetto vincitore: Provenienza geografica")) + theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
+    
+PLOT REALIZZATI CON DATASETS SN175
+
+1)  file_2_pie<-file_2[file_2$ID.TEAM == 'Proponente',]
+    ggplot(data = file_2, aes(x = ETA.CL, y = PROV)) + geom_point(alpha = 0.1, color = "blue") + labs(x="Età", y="Provincia di provenienza") + facet_grid(~EDIZIONE) + ggtitle ("Soggetto vincitore: Età e provincia") + theme(axis.text.x = element_text(angle = 30, hjust = 1)) + theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5),axis.title=element_text(size=9,face="bold"))
+
+2)  file_2_freq<-data.frame(prop.table(table(file_2_pie$TEAM,file_2_pie$EDIZIONE), 2))   
+    file_2_freq<-file_2_freq[file_2_freq$Var1!=" ",]
+    file_2_freq<-file_2_freq[order(-file_2_freq$Freq), ]
+    file_2_freq<-file_2_freq[order(file_2_freq$Var2), ]
+    label<-paste0(round((file_2_freq$Freq)*100, 1),"%")
+    ggplot(data = file_2_freq, aes(x = reorder(Var1, Freq), y = Freq)) + geom_col(aes(fill = Var1), show.legend = FALSE) + coord_flip() + facet_grid(~Var2) + geom_label(aes(label = label, y=0.1, fill = Var1), show.legend = FALSE, size = 3, label.padding = unit(0.1,"lines")) + xlab('Numero di altre persone nel team') + ylab('Frequenza relativa') + ggtitle(paste("Soggetto vincitore: Numero di partecipanti al team di lavoro")) + theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5),axis.title=element_text(size=9,face="bold"))
+    
+    
+RIASSUNTO COMANDI PER OTTENERE SINGOLI PLOT DEL PROGETTO:
+
+library(reshape2)
+library(ggplot2)
+file<-read.csv(file.choose()) # Select SN174.csv
+
+PLOT1 -  
+
+file <- within(file, DATA.CRE <- factor(DATA.CRE, levels=names(sort(table(DATA.CRE), decreasing=FALSE))))
+ggplot(data = file, aes(x = DATA.CRE, y = PROV)) + geom_point(alpha = 0.1, color = "blue") + labs(x="Data di costituzione", y="Provincia di residenza") + facet_grid(~BANDO) + ggtitle ("Soggetto partecipante: Data di costituzione") + theme_bw() + theme(axis.text.x = element_text(angle = 30, hjust = 1)) + theme(plot.title = element_text(size = 13, face = "bold",hjust = 0.5),axis.title=element_text(size=11,face="bold"))
+
+PLOT2 -
+
+ggplot(data = file, aes(x = FORMA.GIU, y = PROV)) + geom_point(alpha = 0.1, color = "blue") + labs(x="Assetto giuridico", y="Provincia di residenza") + facet_grid(~BANDO) + ggtitle ("Soggetto partecipante: Assetto giuridico") + theme_bw() + theme(axis.text.x = element_text(angle = 30, hjust = 1)) + theme(plot.title = element_text(size = 13, face = "bold",hjust = 0.5),axis.title=element_text(size=11,face="bold"))
+
+PLOT3 -
+
+file_freq<-data.frame(prop.table(table(file$FORMA.GIU,file$BANDO), 2)) 
+file_freq<-file_freq[order(-file_freq$Freq), ]
+file_freq<-file_freq[order(file_freq$Var2), ]
+label<-paste0(round((file_freq$Freq)*100, 1),"%")
+ggplot(data = file_freq, aes(x = reorder(Var1, Freq), y = Freq)) + geom_col(aes(fill = Var1), show.legend = FALSE) + coord_flip() + facet_grid(~Var2) + geom_label(aes(label = label, y=0.15, fill = Var1), show.legend = FALSE, size = 3, label.padding = unit(0.1,"lines")) + xlab('Assetto giuridico') + ylab('Frequenza relativa') + ggtitle(paste("Soggetto partecipante: Assetto giuridico")) + theme(plot.title = element_text(size = 13, face = "bold",hjust = 0.5),axis.title=element_text(size=11,face="bold"))
+
+PLOT4 -
+
+file_freq<-data.frame(prop.table(table(file$PROV,file$BANDO), 2)) 
+file_freq<-file_freq[order(-file_freq$Freq), ]
+file_freq<-file_freq[order(file_freq$Var2), ]
+label<-paste0(round((file_freq$Freq)*100, 1),"%")
+ggplot(data = file_freq, aes(x = reorder(Var1, Freq), y = Freq)) + geom_col(aes(fill = Var1), show.legend = FALSE) + coord_flip() + facet_grid(~Var2) + geom_label(aes(label = label, y=0.15, fill = Var1), show.legend = FALSE, size = 3, label.padding = unit(0.1,"lines")) + xlab('Provincia di residenza') + ylab('Frequenza relativa') + ggtitle(paste("Soggetto partecipante: Provincia di residenza")) + theme(plot.title = element_text(size = 13, face = "bold",hjust = 0.5),axis.title=element_text(size=11,face="bold"))
+
+PLOT5 -
+
+file_freq<-data.frame(prop.table(table(file$DATA.CRE,file$BANDO), 2)) 
+file_freq<-file_freq[order(-file_freq$Freq), ]
+file_freq<-file_freq[order(file_freq$Var2), ]
+label<-paste0(round((file_freq$Freq)*100, 1),"%")
+ggplot(data = file_freq, aes(x = reorder(Var1, Freq), y = Freq)) + geom_col(aes(fill = Var1), show.legend = FALSE) + coord_flip() + facet_grid(~Var2) + geom_label(aes(label = label, y=0.15, fill = Var1), show.legend = FALSE, size = 3, label.padding = unit(0.1,"lines")) + xlab('Data di costituzione') + ylab('Frequenza relativa') + ggtitle(paste("Soggetto partecipante: Data di costituzione")) + theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5),axis.title=element_text(size=9,face="bold"))
+
+PLOT 6 -
+
+file_new <- melt(file[,c('BANDO','ART.B.CU','FILANTRO','INN.CULT','POL.SOC','RIC.ISTR')],id.vars='BANDO')
+file_new<-file_new[file_new$BANDO != 'Ora! 2016',]
+file_new<-file_new[file_new$value == 'Presente',]
+
+file_freq<-data.frame(prop.table(table(file_new$variable,file_new$BANDO), 2))
+file_freq<-file_freq[file_freq$Var2 != 'Ora! 2016',]
+
+file_freq[1] <- lapply(file_freq[1], gsub, pattern = "ART.B.CU", replacement = "Arte, attività e beni culturali", fixed = TRUE)
+file_freq[1] <- lapply(file_freq[1], gsub, pattern = "FILANTRO", replacement = "Filantropia e territorio", fixed = TRUE)
+file_freq[1] <- lapply(file_freq[1], gsub, pattern = "INN.CULT", replacement = "Innovazione culturale", fixed = TRUE)
+file_freq[1] <- lapply(file_freq[1], gsub, pattern = "POL.SOC", replacement = "Politiche sociali", fixed = TRUE)
+file_freq[1] <- lapply(file_freq[1], gsub, pattern = "RIC.ISTR", replacement = "Ricerca e istruzione superiore", fixed = TRUE)
+
+label<-paste0(round((file_freq$Freq)*100, 1),"%")
+ggplot(data = file_freq, aes(x = reorder(Var1, Freq), y = Freq)) + geom_col(aes(fill = Var1), show.legend = FALSE) + coord_flip() + facet_grid(~Var2) + geom_label(aes(label = label, y=0.4, fill = Var1), show.legend = FALSE, size = 3, label.padding = unit(0.1,"lines")) + xlab('Ambito di interesse') + ylab('Frequenza relativa') + ggtitle(paste("Soggetto partecipante: Ambito di interesse")) + theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5),axis.title=element_text(size=9,face="bold"))
+
+PLOT ENTRATE -
+
+file_new <- melt(file[,c('BANDO','E.RICAVI','E.C.AMM','E.C.PRIV','E.COFIN','E.SPAOLO','E.ALTRO')],id.vars='BANDO')
+file_new<-file_new[file_new$value != '0',]
+
+file_new[2] <- lapply(file_new[2], gsub, pattern = "E.RICAVI", replacement = "Ricavi_Iniziativa", fixed = TRUE)
+file_new[2] <- lapply(file_new[2], gsub, pattern = "E.C.AMM", replacement = "Cont_Amministrazioni", fixed = TRUE)
+file_new[2] <- lapply(file_new[2], gsub, pattern = "E.C.PRIV", replacement = "Cont_Privati", fixed = TRUE)
+file_new[2] <- lapply(file_new[2], gsub, pattern = "E.COFIN", replacement = "Cofinanziamenti", fixed = TRUE)
+file_new[2] <- lapply(file_new[2], gsub, pattern = "E.SPAOLO", replacement = "Cont_CompagniaSanPaolo", fixed = TRUE)
+file_new[2] <- lapply(file_new[2], gsub, pattern = "E.ALTRO", replacement = "Altre_Entrate", fixed = TRUE)
+
+ggplotly(ggplot(file_new, aes(value)) + geom_histogram(data=subset(file_new,variable == 'Ricavi_Iniziativa'), binwidth = 2, fill = "red", show.legend =TRUE, alpha = 0.2) + geom_histogram(data=subset(file_new,variable == 'Cont_Amministrazioni'), binwidth = 2, fill = "blue4",  show.legend =TRUE, alpha = 0.2) + geom_histogram(data=subset(file_new,variable == 'Cofinanziamenti'), binwidth = 2, fill = "green",  show.legend =TRUE, alpha = 0.2) + geom_histogram(data=subset(file_new,variable == 'Cont_CompagniaSanPaolo'), binwidth = 2, fill = "orange", show.legend =TRUE, alpha = 0.2) + geom_histogram(data=subset(file_new,variable == 'Altre_Entrate'), binwidth = 2, fill = "purple", show.legend =TRUE, alpha = 0.2) + scale_x_continuous("", breaks = seq(0,100,by = 20)) + scale_y_continuous("Conteggio"),tooltip = c("variable","count"))
+
+OR
+
+file_new <- melt(file[,c('BANDO','E.RICAVI','E.C.AMM','E.C.PRIV','E.COFIN','E.SPAOLO','E.ALTRO')],id.vars='BANDO')
+file_new<-file_new[file_new$value != '0',]
+
+Ricavi_Iniziativa<-data.frame(x=subset(file_new,variable == 'E.RICAVI'))
+Cont_Amministrazioni<-data.frame(x=subset(file_new,variable == 'E.C.AMM'))
+Cont_Privati<-data.frame(x=subset(file_new,variable == 'E.C.PRIV'))
+Cofinanziamenti<-data.frame(x=subset(file_new,variable == 'E.COFIN'))
+Cont_CompagniaSanPaolo<-data.frame(x=subset(file_new,variable == 'E.SPAOLO'))
+Altre_Entrate<-data.frame(x=subset(file_new,variable == 'E.ALTRO'))
+
+plot_ly(x = ~Ricavi_Iniziativa$x.value, opacity=0.6, type = 'histogram', name = 'Ricavi Iniziativa', hoverinfo="y+name") %>% add_trace(x = ~Cont_Amministrazioni$x.value, name = 'Amministrazioni') %>% add_trace(x = ~Cont_Privati$x.value, name = 'Privati') %>% add_trace(x = ~Cont_CompagniaSanPaolo$x.value, name = 'Compagnia di San Paolo') %>% add_trace(x = ~Altre_Entrate$x.value, name = 'Altre Entrate') %>% add_trace(x = ~Cofinanziamenti$x.value, name = 'Cofinanziamenti')  %>% layout(p, barmode="overlay") %>% layout(p,xaxis=list(title="Entrate previste [%]", titlefont=list(family = "Arial, sans-serif", size=18)))  %>% layout(p,yaxis=list(title="Conteggio", titlefont=list(family = "Arial, sans-serif", size=18)))
+
+
+PLOT USCITE
+
+file_new <- melt(file[,c('BANDO','U.HR','U.SERVIZ','U.BENI','U.ALTRO')],id.vars='BANDO')
+file_new<-file_new[file_new$value != '0',]
+Risorse_Umane<-data.frame(x=subset(file_new,variable == 'U.HR'))
+Servizi<-data.frame(x=subset(file_new,variable == 'U.SERVIZ'))
+Beni<-data.frame(x=subset(file_new,variable == 'U.BENI'))
+Altre_Uscite<-data.frame(x=subset(file_new,variable == 'U.ALTRO'))
+plot_ly(x = ~Risorse_Umane$x.value, opacity=0.6, type = 'histogram', name = 'Risorse Umane', hoverinfo="y+name") %>% add_trace(x = ~Servizi$x.value, name = 'Servizi') %>% add_trace(x = ~Beni$x.value, name = 'Beni') %>% add_trace(x = ~Altre_Uscite$x.value, name = 'Altre Uscite') %>% layout(barmode="overlay") %>% layout(xaxis=list(title="Entrate previste [%]", titlefont=list(family = "Arial, sans-serif", size=18)))  %>% layout(yaxis=list(title="Conteggio", titlefont=list(family = "Arial, sans-serif", size=18)))
+
+PLOT PIE CHART (Gambetta)
+
+file_freq<-data.frame(prop.table(table(file$FORMA.GIU,file$BANDO), 2)) 
+uno <- filter(file_freq, Var2 == "Open 2015")
+due <- filter(file_freq, Var2 == "Open 2016")
+tre <- filter(file_freq, Var2 == "Ora! 2016")
+plot_ly(uno, labels = ~Var1, values = ~Freq, type = "pie", domain = list(x = c(0, 0.4), y = c(0.4, 1)),textinfo='label',insidetextfont = list(color = '#FFFFFF'),marker = list(line = list(color = '#FFFFFF', width = 0.8)), name ="Open 2015") %>% add_pie(data = due, labels = ~Var1, values = ~Freq, type = "pie", domain = list(x = c(0.6, 1), y = c(0.4, 1)),textinfo='label',insidetextfont = list(color = '#FFFFFF'),marker = list(line = list(color = '#FFFFFF', width = 0.8)), name ="Open 2016") %>% add_pie(data = tre, labels = ~Var1, values = ~Freq, type = "pie", domain = list(x = c(0.25, 0.75), y = c(0, 0.6)),textinfo='label',insidetextfont = list(color = '#FFFFFF'),marker = list(line = list(color = '#FFFFFF', width = 0.8)), name ="Ora! 2016") %>% layout(title = "Pie Charts with Subplots", showlegend = F, xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE), yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+PLOT COLONNE AMBITO INTERESSE
+
+file_new <- melt(file[,c('BANDO','ART.B.CU','FILANTRO','INN.CULT','POL.SOC','RIC.ISTR')],id.vars='BANDO')
+file_new<-file_new[file_new$BANDO != 'Ora! 2016',]
+file_new<-file_new[file_new$value == 'Presente',]
+file_freq<-data.frame(prop.table(table(file_new$variable,file_new$BANDO), 2))
+file_freq<-file_freq[file_freq$Var2 != 'Ora! 2016',]
+file_freq<-file_freq[order(-file_freq$Freq), ]
+file_freq<-file_freq[order(file_freq$Var2), ]
+colnames(file_freq) <- c("Ambito", "Bando","Frequenza")
+file_freq[1] <- lapply(file_freq[1], gsub, pattern = "ART.B.CU", replacement = "Arte, attività e beni culturali", fixed = TRUE)
+file_freq[1] <- lapply(file_freq[1], gsub, pattern = "FILANTRO", replacement = "Filantropia e territorio", fixed = TRUE)
+file_freq[1] <- lapply(file_freq[1], gsub, pattern = "INN.CULT", replacement = "Innovazione culturale", fixed = TRUE)
+file_freq[1] <- lapply(file_freq[1], gsub, pattern = "POL.SOC", replacement = "Politiche sociali", fixed = TRUE)
+file_freq[1] <- lapply(file_freq[1], gsub, pattern = "RIC.ISTR", replacement = "Ricerca e istruzione superiore", fixed = TRUE)
+file_freq<-as.data.frame(file_freq)
+file_freq["Percentuale"] <- NA
+file_freq$Percentuale <- round((file_freq$Frequenza)*100, 1)
+ggplotly(ggplot(data = file_freq, aes(x = reorder(Ambito, Percentuale), y = Percentuale)) + geom_col(aes(fill = Ambito), show.legend = FALSE) + coord_flip() + facet_grid(~Bando) + xlab('') + ylab('') + theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5),axis.title=element_text(size=9,face="bold")), tooltip = c("Ambito","Percentuale"))
+
+NB: to make interactive plots, just type p=ggplot(...) + ... then p=ggplotly(p). Type p to visualize the interactive plot!
